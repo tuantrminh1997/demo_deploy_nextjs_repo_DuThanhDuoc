@@ -232,3 +232,24 @@ jobs:
             # Chính PM2 sẽ stop/start lại application,
             # để phiên bản mới vừa build được đưa vào chạy.
             pm2 restart Project_Deploy_Next_JS
+
+# Work flow tổng quát khi có code push vào nhánh được chỉ định (GITHUB ACTIONS PHÁT HIỆN CÓ WORKFLOW):
+# Push code lên GitHub
+#         ↓
+# GitHub Actions phát hiện workflow
+#         ↓
+# 🟡 In progress
+#         ↓
+# GitHub Actions Runner chạy các step
+# ├── checkout code
+# ├── setup Node.js
+# ├── chuẩn bị SSH
+# └── ssh vào VPS
+#         ↓
+#      VPS
+#      ├── git pull
+#      ├── npm install
+#      ├── npm run build
+#      └── pm2 restart
+#         ↓
+# ✅ Workflow thành công
