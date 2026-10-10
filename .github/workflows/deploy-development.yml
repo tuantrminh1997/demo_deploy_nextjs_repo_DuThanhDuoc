@@ -2,7 +2,7 @@
 
 # Tên của github action workflow
 # Tên này do ta tự nghĩ ra rồi đặt, dùng để nhận biết workflow trong tab Github Action.
-name: Deploy Production for NextJS
+name: Deploy Development for NextJS
 
 # Khai báo xem sự kiện nào sẽ kích hoạt workflow
 # Lý do cần có file này: Github Actions cần biết "khi nào thì chạy file này", nên phải có phần on.
