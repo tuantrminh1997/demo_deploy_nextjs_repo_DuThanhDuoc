@@ -2,19 +2,19 @@
 
 # Tên của github action workflow
 # Tên này do ta tự nghĩ ra rồi đặt, dùng để nhận biết workflow trong tab Github Action.
-name: Deploy Production for NextJS
+name: Deploy Staging for NextJS
 
 # Khai báo xem sự kiện nào sẽ kích hoạt workflow
 # Lý do cần có file này: Github Actions cần biết "khi nào thì chạy file này", nên phải có phần on.
 on:
   # Ta yêu cầu Github thực thi workflow này khi có người push code lên
   push:
-    # Nhưng chỉ thực thi workflow khi có người push code vào nhánh production
-    branches: ["production"]
+    # Nhưng chỉ thực thi workflow khi có người push code vào nhánh staging
+    branches: ["staging"]
   # Ta cũng yêu cầu Github thực thi workflow khi có Pull Request được merge
   pull_request:
-    # Nhưng sẽ chỉ thực thi khi Pull Request được merge vào nhánh production.
-    branches: ["production"]
+    # Nhưng sẽ chỉ thực thi khi Pull Request được merge vào nhánh staging.
+    branches: ["staging"]
 
 # Khai báo các CÔNG VIỆC LỚN mà workflow phải làm
 jobs:
@@ -62,14 +62,14 @@ jobs:
 
         # Ta yêu cầu shell trên máy tính Ubuntu chạy lệnh echo này.
         #
-        # Github sẽ lấy giá trị của secret có tên ENV_PRODUCTION,
+        # Github sẽ lấy giá trị của secret có tên ENV_STAGING,
         # Sau đó shell ghi giá trị đó vào file .env.
         #
         # "secrets" chính là kho Github Secrets;
-        # ENV_PRODUCTIONS là tên secrets do ta tạo.
+        # ENV_STAGINGS là tên secrets do ta tạo.
         #
-        # Điền full nội dung file .env mà ta dùng trong repo vào biến ENV_PRODUCTION
-        run: echo "${{ secrets.ENV_PRODUCTION }}" > .env
+        # Điền full nội dung file .env mà ta dùng trong repo vào biến ENV_STAGING
+        run: echo "${{ secrets.ENV_STAGING }}" > .env
 
       # Bước 4: cài đặt dependencies
       # Ta yêu cầu npm trên máy Ubuntu thực hiện cài đặt dependencies của project.
@@ -113,33 +113,33 @@ jobs:
         # Ta cần truyền các thông tin cần thiết (Gía trị biến môi trường) cho action appleboy/ssh-action.
         with:
           # Ta nói cho action appleboy/ssh-action@v1.2.0 biết phải SSH tới máy nào nhờ việc truyền giá trị host cho nó
-          # host ta lấy từ giá trị môi trường HOST_PRODUCTION (Chính )
+          # host ta lấy từ giá trị môi trường HOST_STAGING (Chính )
           #
-          # Github sẽ lấy giá trị biến HOST_PRODUCTION từ Github Secrets rồi đưa
+          # Github sẽ lấy giá trị biến HOST_STAGING từ Github Secrets rồi đưa
           # giá trị đó cho action appleboy/ssh-action@v1.2.0 làm địa chỉ VPS.
           #
-          # Điền giá trị public IP của VPS vào biến HOST_PRODUCTION
-          host: ${{ secrets.HOST_PRODUCTION }}
+          # Điền giá trị public IP của VPS vào biến HOST_STAGING
+          host: ${{ secrets.HOST_STAGING }}
 
           # Ta nói cho action appleboy/ssh-action biết phải đăng nhập vào VPS bằng username nào.
           #
-          # Gía trị thật được Github lấy từ secret USERNAME_PRODUCTION
-          username: ${{ secrets.USERNAME_PRODUCTION }}
+          # Gía trị thật được Github lấy từ secret USERNAME_STAGING
+          username: ${{ secrets.USERNAME_STAGING }}
 
           # Ta cung cấp password để action appleboy/ssh-action@v1.2.0 xác thực với VPS
           #
-          # Github sẽ lấy password tử secret PASSWORD_PRODUCTION
+          # Github sẽ lấy password tử secret PASSWORD_STAGING
           # thay vì viết password thật trực tiếp trong source code.
-          password: ${{ secrets.PASSWORD_PRODUCTION }}
+          password: ${{ secrets.PASSWORD_STAGING }}
 
           # Ta nói cho action appleboy/ssh-action@v1.2.0 biết SSH Server trên VPS
           # đang lắng nghe ở Port nào.
           #
-          # Gía trị được lấy từ secret PORT_PRODUCTION
+          # Gía trị được lấy từ secret PORT_STAGING
           #
-          # --- Giải thích bản chất của PORT_PRODUCTION ---
-          # PORT_PRODUCTION ở đây là port SSH mà Github Actions sẽ dùng để kết nối vào VPS
-          # -> nếu VPS của ta dùng SSH mặc định thì thường PORT_PRODUCTION = 22, không liên quan gì tới Nginx ở đây:
+          # --- Giải thích bản chất của PORT_STAGING ---
+          # PORT_STAGING ở đây là port SSH mà Github Actions sẽ dùng để kết nối vào VPS
+          # -> nếu VPS của ta dùng SSH mặc định thì thường PORT_STAGING = 22, không liên quan gì tới Nginx ở đây:
           # Nginx thì thường lắng nghe:
           # HTTP -> PORT 80
           # HTTPS -> PORT
@@ -163,7 +163,7 @@ jobs:
           # việc bị nghe lén hay đánh cắp dữ liệu.
           # 4. Thực thi lệnh từ xa (Remote Execution): Tiếp nhận các câu lệnh từ máy của bạn và gửi sang VPS, chạy chúng trên hệ thống của VPS và
           # trả lại kết quả qua màn hình.
-          port: ${{ secrets.PORT_PRODUCTION }}
+          port: ${{ secrets.PORT_STAGING }}
 
           # Ta yêu cầu action appleboy/ssh-action@v1.2.0:
           # Sau khi kết nối thành công vào VPS,
@@ -188,24 +188,24 @@ jobs:
             # 
             # Từ đây các lệnh git / npm phía dưới
             # sẽ tác động lên project deploy demo_deploy_nextjs_repo_DuThanhDuoc
-            cd ~/production/demo_deploy_nextjs_repo_DuThanhDuoc
+            cd ~/staging/demo_deploy_nextjs_repo_DuThanhDuoc
 
             # Yêu cầu Git trên VPS liên hệ các remote repo
             git fetch --all
 
             # Ta yêu cầu Git trên VPS ép source code hiện tại
-            # trở thành đúng phiên bản của origin / main.
+            # trở thành đúng phiên bản của origin / staging.
             # 
             # "origin" = tên remote git.
-            # "main" - branch main trên remote đó.
+            # "staging" - branch staging trên remote đó.
             # 
             # Chính Git thực hiện việc thay đổi các file trong project.
-            git reset --hard origin/production
+            git reset --hard origin/staging
 
-            # Ta yêu cầu Github lấy secret ENV_PRODUCTION,
+            # Ta yêu cầu Github lấy secret ENV_STAGING,
             # Rồi gửi câu lệnh này qua SSH để shell trên VPS ghi nội dung
             # này vào trong file .env
-            echo "${{ secrets.ENV_PRODUCTION }}" > .env
+            echo "${{ secrets.ENV_STAGING }}" > .env
 
             # Ta yêu cầu npm trên VPS cài dependency
             # tương ứng với source code mới vừa lấy về.
