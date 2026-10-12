@@ -66,10 +66,23 @@ require("dotenv").config({
 // Ubuntu VPS
 
 // và không cần tạo riêng ecosystem.windows.cjs / ecosystem.linux.cjs.
+
+// Lấy ra tên môi trường tương ứng để tiện theo dõi trên pm2
+const path = require("node:path");
+// __dirname là folder frontend-nextjs
+// path.dirname(__dirname) là folder environment
+const environment = path.basename(path.dirname(__dirname));
+
+const allowedEnvironments = ["development", "staging", "production"];
+
+if (!allowedEnvironments.includes(environment)) {
+  throw new Error(`Tên môi trường ${environment} không hợp lệ!`);
+}
+
 module.exports = {
   apps: [
     {
-      name: "Project_Deploy_Next_JS",
+      name: `frontend_nextjs_${environment}`,
 
       // Windows cần cmd.exe.
       // Linux chạy npm trực tiếp.
