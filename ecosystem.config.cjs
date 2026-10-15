@@ -29,15 +29,26 @@ if (!allowedEnvironments.includes(environment)) {
   throw new Error(`Tên môi trường "${environment}" không hợp lệ!`);
 }
 
+// Lưu ý: vùng code trong điều kiện "if (environment === "development") {..." chỉ sử dụng khi môi trường production
+// trên VPS của ta đã thực thi được việc nạp giá trị môi trường từ Docker??? còn không ta comment lại nếu không ở
+// thư mục "~./production/...." trên VPS sẽ không nhảy vào vùng điều kiện này -> không đọc được process.env.PORT
+// -> process.env.PORT bị undefined và Nextjs mặc định nạp lên ở PORT 3000 (trong khi ta cần PORT = 3002)
 // Chỉ ở development mới thử đọc file .env; staging/production dùng biến do hệ thống deploy truyền vào.
-if (environment === "development") {
-  // dotenv đọc file .env và đưa các giá trị vào process.env của tiến trình đang nạp cấu hình.
-  // Biến đã tồn tại trong process.env sẽ được giữ nguyên (không bị .env ghi đè mặc định).
-  require("dotenv").config({
-    // Xác định chính xác file .env nằm cùng thư mục với ecosystem.config.cjs.
-    path: path.join(__dirname, ".env"),
-  });
-}
+// if (environment === "development") {
+//   // dotenv đọc file .env và đưa các giá trị vào process.env của tiến trình đang nạp cấu hình.
+//   // Biến đã tồn tại trong process.env sẽ được giữ nguyên (không bị .env ghi đè mặc định).
+//   require("dotenv").config({
+//     // Xác định chính xác file .env nằm cùng thư mục với ecosystem.config.cjs.
+//     path: path.join(__dirname, ".env"),
+//   });
+// }
+
+// dotenv đọc file .env và đưa các giá trị vào process.env của tiến trình đang nạp cấu hình.
+// Biến đã tồn tại trong process.env sẽ được giữ nguyên (không bị .env ghi đè mặc định).
+require("dotenv").config({
+  // Xác định chính xác file .env nằm cùng thư mục với ecosystem.config.cjs.
+  path: path.join(__dirname, ".env"),
+});
 
 // Xuất đối tượng cấu hình cho PM2; đây không phải đoạn code trực tiếp chạy Next.js.
 module.exports = {
