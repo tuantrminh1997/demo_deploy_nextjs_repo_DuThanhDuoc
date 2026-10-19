@@ -73,7 +73,11 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Địa chỉ Email</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="email" {...field} />
+                <Input
+                  placeholder="Hãy nhập địa email đã đăng ký"
+                  type="email"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -86,7 +90,11 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" type="password" {...field} />
+                <Input
+                  placeholder="Hãy nhập mật khẩu"
+                  type="password"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
