@@ -2,7 +2,7 @@
 
 # Tên của github action workflow
 # Tên này do ta tự nghĩ ra rồi đặt, dùng để nhận biết workflow trong tab Github Action.
-name: Deploy Production for NextJS
+name: Deploy production for NextJS
 
 # Khai báo xem sự kiện nào sẽ kích hoạt workflow
 # Lý do cần có file này: Github Actions cần biết "khi nào thì chạy file này", nên phải có phần on.
@@ -12,10 +12,10 @@ on:
     # Nhưng chỉ thực thi workflow khi có người push code vào nhánh production
     branches: ["production"]
   # Ta cũng yêu cầu Github thực thi workflow khi có Pull Request được merge
-  # Bất cứ khi nào có 1 PR được tạo ra để chờ merge vào development -> đều
+  # Bất cứ khi nào có 1 PR được tạo ra để chờ merge vào production -> đều
   # pull_request:
-  # Nhưng sẽ chỉ thực thi khi Pull Request được merge vào nhánh development.
-  # branches: ["development"]
+  # Nhưng sẽ chỉ thực thi khi Pull Request được merge vào nhánh production.
+  # branches: ["production"]
 
 # Khai báo các CÔNG VIỆC LỚN mà workflow phải làm
 jobs:
@@ -77,7 +77,12 @@ jobs:
       #
       # npm sẽ đọc package.json / package-lock.json
       # để biết cần cài đặt những package nào.
-      - run: npm install --force
+      # - run: npm install --force
+      # Ta sẽ chuyển sang dùng npm ci ở cả 2 job, vì npm ci được thiết kế chính xác cho mục đích:
+      # - Job build cài đúng dependency đã được khóa trong package-lock.json.
+      # - Job deploy trên VPS cũng cài đúng dependency tương ứng.
+      # - Không có chuyện npm tự sửa lockfile khiến dependency giữa các môi trường bị lệch ngoài dự kiến.
+      - run: npm ci
 
       # bước 5: build dự án.
       # Ta yêu cầu npm chạy script có tên "build"
@@ -195,10 +200,10 @@ jobs:
             git fetch --all
 
             # Ta yêu cầu Git trên VPS ép source code hiện tại
-            # trở thành đúng phiên bản của origin / main.
+            # trở thành đúng phiên bản của origin / production.
             # 
             # "origin" = tên remote git.
-            # "main" - branch main trên remote đó.
+            # "production" - branch production trên remote đó.
             # 
             # Chính Git thực hiện việc thay đổi các file trong project.
             git reset --hard origin/production
@@ -212,13 +217,19 @@ jobs:
             # tương ứng với source code mới vừa lấy về.
             # 
             # npm đọc package.json / package-lock.json để biết phải cài gì.
-            npm install --force
+            # Lưu ý Bỏ lệnh cho cả job build lẫn deploy: npm install --force
+
+            # Ta sẽ chuyển sang dùng npm ci ở cả 2 job, vì npm ci được thiết kế chính xác cho mục đích:
+            # - Job build cài đúng dependency đã được khóa trong package-lock.json.
+            # - Job deploy trên VPS cũng cài đúng dependency tương ứng.
+            # - Không có chuyện npm tự sửa lockfile khiến dependency giữa các môi trường bị lệch ngoài dự kiến.
+            npm ci
 
             # Ta yêu cầu npx chạy Prisma CLI
             # 
             # Prisma sẽ đọc Prisma Schema của project
             # rồi generate Prisma Client tương ứng.
-            npx prisma generate
+            # npx prisma generate
 
             # Ta yêu cầu npm trên VPS chạy script "build".
             # 
@@ -232,7 +243,13 @@ jobs:
             # "Fastify" là tên process đã được đăng ký với PM2 trước đó.
             # Chính PM2 sẽ stop/start lại application,
             # để phiên bản mới vừa build được đưa vào chạy.
-            pm2 restart Project_Deploy_Next_JS
+            # 
+            # Nếu không có cờ --update-env thì:
+            # PM2 khởi động lại ứng dụng, Mặc định tiếp tục sử dụng bộ biến môi trường đã lưu trước đó.
+            # Nếu có cờ --update-end thì:
+            # PM2 khởi động lại ứng dụng.
+            # Đồng thời cập nhật biến môi trường từ shell đang thực thi lệnh.
+            pm2 restart frontend_nextjs_production --update-end
 
 # Work flow tổng quát khi có code push vào nhánh được chỉ định (GITHUB ACTIONS PHÁT HIỆN CÓ WORKFLOW):
 # Push code lên GitHub
