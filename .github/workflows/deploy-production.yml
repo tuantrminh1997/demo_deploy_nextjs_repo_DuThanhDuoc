@@ -83,7 +83,7 @@ jobs:
       # Ta yêu cầu npm chạy script có tên "build"
       #
       # npm tìm script có tên build trong "script" của package.json
-      - run: npm run
+      - run: npm run build
 
   # Ta tạo Job thứ 2 có tên "deploy"
   # -> Job này sẽ chịu trách nhiệm đưa phiên bản mới nhất lên VPS.
