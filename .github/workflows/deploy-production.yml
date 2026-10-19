@@ -218,7 +218,7 @@ jobs:
             # 
             # Prisma sẽ đọc Prisma Schema của project
             # rồi generate Prisma Client tương ứng.
-            npx prisma generate
+            # npx prisma generate
 
             # Ta yêu cầu npm trên VPS chạy script "build".
             # 
@@ -232,7 +232,7 @@ jobs:
             # "Fastify" là tên process đã được đăng ký với PM2 trước đó.
             # Chính PM2 sẽ stop/start lại application,
             # để phiên bản mới vừa build được đưa vào chạy.
-            pm2 restart frontend_nextjs
+            pm2 restart frontend_nextjs_production
 
 # Work flow tổng quát khi có code push vào nhánh được chỉ định (GITHUB ACTIONS PHÁT HIỆN CÓ WORKFLOW):
 # Push code lên GitHub
