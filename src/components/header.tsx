@@ -7,15 +7,16 @@ import Link from "next/link";
 export default function Header() {
   const { user } = useAppContext();
 
-  const url = "https://development.tuantmstudyingnestjs.xyz/login";
+  // const url = "https://development.tuantmstudyingnestjs.xyz/login";
+
   // const environmentName =
   //   window.location.href.split("://")[1].split(".")[0] !== ""
   //     ? window.location.href.split("://")[1].split(".")[0]
   //     : "production";
 
   const environmentName =
-    url.split("://")[1].split(".")[0] !== ""
-      ? url.split("://")[1].split(".")[0]
+    window.location.href.split("://")[1].split(".")[0] !== ""
+      ? window.location.href.split("://")[1].split(".")[0]
       : "production";
 
   return (
