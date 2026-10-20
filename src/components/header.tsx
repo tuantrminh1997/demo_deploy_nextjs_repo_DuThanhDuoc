@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 import { useAppContext } from "@/app/app-provider";
 import ButtonLogout from "@/components/button-logout";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -7,17 +8,20 @@ import Link from "next/link";
 export default function Header() {
   const { user } = useAppContext();
 
-  // const url = "https://development.tuantmstudyingnestjs.xyz/login";
+  const [environmentName, setEnvironmentName] = useState("production");
 
-  // const environmentName =
-  //   window.location.href.split("://")[1].split(".")[0] !== ""
-  //     ? window.location.href.split("://")[1].split(".")[0]
-  //     : "production";
-
-  const environmentName =
-    window.location.href.split("://")[1].split(".")[0] !== ""
-      ? window.location.href.split("://")[1].split(".")[0]
-      : "production";
+  useEffect(() => {
+    // useEffect() chỉ chạy sau khi component được render ở trình duyệt, vì vậy tránh được lỗi truy cập window khi Next.js prerender trên server.
+    // -> nếu để window ở ngoài sẽ bị lỗi do nextjs không truy cập được đối ượng window.
+    const hostname = window.location.hostname;
+    if (hostname.startsWith("development.")) {
+      setEnvironmentName("development");
+    } else if (hostname.startsWith("staging.")) {
+      setEnvironmentName("staging");
+    } else {
+      setEnvironmentName("production");
+    }
+  }, []);
 
   return (
     <div className="flex flex-col space-x-4 items-center justify-center min-h-[200px] hover:bg-slate-500 hover:text-slate-50">
