@@ -78,11 +78,11 @@ jobs:
       # npm sẽ đọc package.json / package-lock.json
       # để biết cần cài đặt những package nào.
       # - run: npm install --force
-      # Ta sẽ chuyển sang dùng npm ci ở cả 2 job, vì npm ci được thiết kế chính xác cho mục đích:
+      # Ta sẽ chuyển sang dùng npm ci --legacy-peer-deps ở cả 2 job, vì npm ci --legacy-peer-deps được thiết kế chính xác cho mục đích:
       # - Job build cài đúng dependency đã được khóa trong package-lock.json.
       # - Job deploy trên VPS cũng cài đúng dependency tương ứng.
       # - Không có chuyện npm tự sửa lockfile khiến dependency giữa các môi trường bị lệch ngoài dự kiến.
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
 
       # bước 5: build dự án.
       # Ta yêu cầu npm chạy script có tên "build"
@@ -219,11 +219,11 @@ jobs:
             # npm đọc package.json / package-lock.json để biết phải cài gì.
             # Lưu ý Bỏ lệnh cho cả job build lẫn deploy: npm install --force
 
-            # Ta sẽ chuyển sang dùng npm ci ở cả 2 job, vì npm ci được thiết kế chính xác cho mục đích:
+            # Ta sẽ chuyển sang dùng npm ci --legacy-peer-deps ở cả 2 job, vì npm ci --legacy-peer-deps được thiết kế chính xác cho mục đích:
             # - Job build cài đúng dependency đã được khóa trong package-lock.json.
             # - Job deploy trên VPS cũng cài đúng dependency tương ứng.
             # - Không có chuyện npm tự sửa lockfile khiến dependency giữa các môi trường bị lệch ngoài dự kiến.
-            npm ci
+            npm ci --legacy-peer-deps
 
             # Ta yêu cầu npx chạy Prisma CLI
             # 
