@@ -246,10 +246,10 @@ jobs:
             # 
             # Nếu không có cờ --update-env thì:
             # PM2 khởi động lại ứng dụng, Mặc định tiếp tục sử dụng bộ biến môi trường đã lưu trước đó.
-            # Nếu có cờ --update-end thì:
+            # Nếu có cờ --update-env thì:
             # PM2 khởi động lại ứng dụng.
             # Đồng thời cập nhật biến môi trường từ shell đang thực thi lệnh.
-            pm2 restart frontend_nextjs_development --update-end
+            pm2 restart frontend_nextjs_development --update-env
 
 # Work flow tổng quát khi có code push vào nhánh được chỉ định (GITHUB ACTIONS PHÁT HIỆN CÓ WORKFLOW):
 # Push code lên GitHub
